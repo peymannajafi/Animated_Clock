@@ -37,13 +37,13 @@
         #imageUrlInput {
             flex-grow: 1;
             border-radius: 0.375rem;
-            border: 1px solid #000000;
+            border: 1px solid #0000ff;
             padding: 0.5rem 0.75rem;
             font-size: 0.875rem;
         }
         #updateImageBtn {
             padding: 0.5rem 1rem;
-            background-color: #000000;
+            background-color: #0000ff;
             color: white;
             border-radius: 0.375rem;
             border: none;
@@ -66,7 +66,7 @@
 </head>
 <body>
     <div class="clock-container">
-        <canvas id="clockCanvas" width="400" height="400"></canvas>
+        <canvas id="clockCanvas" width="500" height="500"></canvas>
         <div class="input-group">
             <input type="text" id="imageUrlInput" placeholder="Paste image URL here...">
             <button id="updateImageBtn">Update</button>
@@ -223,7 +223,7 @@
 
         // --- Initial Load ---
         // Load a default image from a reliable source (picsum.photos) to prevent initial errors.
-        loadImage('https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Star_of_David.svg/1200px-Star_of_David.svg.png');
+        loadImage('https://picsum.photos/300/300');
     </script>
 </body>
 </html>
