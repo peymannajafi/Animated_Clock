@@ -76,7 +76,18 @@
             box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
         }
 
-
+        #updateImageBtn {
+            padding: 0.75rem 1.5rem;
+            background-color: #000000; /* sky-500 */
+            color: white;
+            border-radius: 0rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+        }
+        #updateImageBtn:hover {
+            background-color: #000000; /* sky-600 */
         }
 
         #errorMessage {
@@ -97,6 +108,7 @@
         <canvas id="clockCanvas" width="500" height="500"></canvas>
         <div class="input-group">
             <input type="text" id="imageUrlInput" placeholder="I Love Alishahi...">
+            <!-- button id="updateImageBtn">Update</button
         </div>
         <div id="errorMessage" style="display: none;"></div>
     </div>
