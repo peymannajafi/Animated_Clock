@@ -1,284 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Animated Clock</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        /* * MODERN DARK THEME & LAYOUT
-         * Using a slate color palette for a professional look.
-         */
-        body {
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #ffffff; /* slate-900 */
-            color: #000000; /* gray-300 */
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern Animated Clock</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #ffffff;
+      color: #000000;
+    }
 
-        /* * CLOCK WIDGET CONTAINER
-         * Provides a "card" for the clock and controls to live in.
-         * Includes padding, rounded corners, and a subtle shadow for depth.
-         */
-        .clock-widget {
-            background-color: #ffffff; /* slate-800 */
-            padding: 2rem;
-            border-radius: 0rem; /* Increased rounding */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            border: 3px solid #000000; /* slate-700 */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            width: 90%;
-            max-width: 420px;
-        }
+    .clock-widget {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 0rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      border: 3px solid #000000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 90%;
+      max-width: 420px;
+    }
 
-        /* * CANVAS STYLING
-         * A subtle drop-shadow makes the clock hands and markers "pop".
-         */
-        canvas {
-            border-radius: 50%;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-            width: 100%;
-            height: auto;
-        }
+    canvas {
+      border-radius: 50%;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+      width: 100%;
+      height: auto;
+    }
 
-        /* * INPUT & BUTTON GROUP STYLING
-         * Ensures controls are well-spaced and visually appealing.
-         */
-        .input-group {
-            display: flex;
-            gap: 0.75rem;
-            width: 100%;
-        }
+    .input-group {
+      width: 100%;
+    }
 
-        #imageUrlInput {
-            flex-grow: 1;
-            background-color: #ffffff; /* slate-700 */
-            border: 1px solid #000000; /* slate-600 */
-            color: #000000; /* slate-50 */
-            padding: 0.75rem 1rem;
-            border-radius: 0rem;
-            font-size: 0.875rem;
-            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-        #imageUrlInput::placeholder {
-            color: #000000; /* slate-400 */
-        }
-        #imageUrlInput:focus {
-            outline: none;
-            border-color: #000000; /* cyan-400 */
-            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
-        }
+    #imageUrlInput {
+      width: 100%;
+      background-color: #ffffff;
+      border: 1px solid #000000;
+      color: #000000;
+      padding: 0.75rem 1rem;
+      border-radius: 0rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
 
-        #updateImageBtn {
-            padding: 0.75rem 1.5rem;
-            background-color: #000000; /* sky-500 */
-            color: white;
-            border-radius: 0rem;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s ease-in-out;
-        }
-        #updateImageBtn:hover {
-            background-color: #000000; /* sky-600 */
-        }
+    #imageUrlInput::placeholder {
+      color: #000000;
+    }
 
-        #errorMessage {
-            color: #000000; /* red-400 */
-            background-color: rgba(0, 0, 0, 0);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            padding: 0.75rem;
-            border-radius: 0rem;
-            font-size: 0.875rem;
-            text-align: center;
-            width: 100%;
-        }
-    </style>
+    #imageUrlInput:focus {
+      outline: none;
+      border-color: #000000;
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
+    }
+
+    #errorMessage {
+      color: #000000;
+      background-color: rgba(0, 0, 0, 0);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      padding: 0.75rem;
+      border-radius: 0rem;
+      font-size: 0.875rem;
+      text-align: center;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
-    <div class="clock-widget">
-        <!-- Canvas dimensions are set higher for better resolution on high-DPI screens -->
-        <canvas id="clockCanvas" width="500" height="500"></canvas>
-        <div class="input-group">
-            <input type="text" id="imageUrlInput" placeholder="I Love Alishahi...">
-            <button id="updateImageBtn">Update</button
-        </div>
-        <div id="errorMessage" style="display: none;"></div>
+  <div class="clock-widget">
+    <canvas id="clockCanvas" width="500" height="500"></canvas>
+    <div class="input-group">
+      <input type="text" id="imageUrlInput" placeholder="I Love Alishahi..." />
     </div>
+    <div id="errorMessage" style="display: none;"></div>
+  </div>
 
-    <script>
-        // --- Canvas and Clock Setup ---
-        const canvas = document.getElementById('clockCanvas');
-        const ctx = canvas.getContext('2d');
-        const radius = canvas.height / 2;
-        const center = radius;
+  <script>
+    const canvas = document.getElementById('clockCanvas');
+    const ctx = canvas.getContext('2d');
+    const radius = canvas.height / 2;
+    const center = radius;
 
-        // --- DOM Elements ---
-        const imageUrlInput = document.getElementById('imageUrlInput');
-        const updateImageBtn = document.getElementById('updateImageBtn');
-        const errorMessage = document.getElementById('errorMessage');
-        
-        // --- Image Loading ---
-        const bgImage = new Image();
-        let animationFrameId;
+    const imageUrlInput = document.getElementById('imageUrlInput');
+    const errorMessage = document.getElementById('errorMessage');
 
-        /**
-         * Loads an image from a URL and starts the clock animation.
-         * @param {string} url - The URL of the image to load.
-         */
-        function loadImage(url) {
-            errorMessage.style.display = 'none';
-            if (animationFrameId) {
-                cancelAnimationFrame(animationFrameId);
-            }
-            // Necessary for loading images from other domains (like picsum.photos) onto the canvas.
-            bgImage.crossOrigin = "Anonymous";
-            bgImage.src = url;
-        }
-        
-        // --- Error Handling ---
-        bgImage.onerror = () => {
-            console.error("Failed to load image. It may be due to a bad URL or CORS restrictions.");
-            errorMessage.textContent = 'Image failed to load. Try another URL.';
-            errorMessage.style.display = 'block';
-            // Fallback to a placeholder. Set src directly to avoid potential error loops with loadImage.
-            bgImage.src = "https://i.postimg.cc/ZRdKmz7T/Alish.jpg";
-        };
+    const bgImage = new Image();
+    let animationFrameId;
 
-        // --- Animation Start ---
-        bgImage.onload = () => {
-            // Start the animation loop only after the image has loaded successfully.
-            animate();
-        };
+    function loadImage(url) {
+      errorMessage.style.display = 'none';
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      bgImage.crossOrigin = "Anonymous";
+      bgImage.src = url;
+    }
 
-        // --- Event Listener for UI ---
-        updateImageBtn.addEventListener('click', () => {
-            const newUrl = imageUrlInput.value.trim();
-            if (newUrl) {
-                loadImage(newUrl);
-            }
-        });
+    bgImage.onerror = () => {
+      console.error("Failed to load image. It may be due to a bad URL or CORS restrictions.");
+      errorMessage.textContent = 'Image failed to load. Try another URL.';
+      errorMessage.style.display = 'block';
+      bgImage.src = "https://i.postimg.cc/ZRdKmz7T/Alish.jpg";
+    };
 
-        /**
-         * Draws the entire clock face, including background, markers, and hands.
-         * This function is called on every animation frame.
-         */
-        function drawClock() {
-            const now = new Date();
-            const seconds = now.getSeconds();
-            const minutes = now.getMinutes();
-            const hours = now.getHours();
+    bgImage.onload = () => {
+      animate();
+    };
 
-            // --- 1. Clear and Prepare Canvas ---
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Optional: Load image on input blur/change (instead of button)
+    imageUrlInput.addEventListener('change', () => {
+      const newUrl = imageUrlInput.value.trim();
+      if (newUrl) {
+        loadImage(newUrl);
+      }
+    });
 
-            // --- 2. Draw Glassmorphism Background & Clipped Image ---
-            ctx.save();
-            
-            // First, draw the semi-transparent "glass" overlay across the whole clock face
-            ctx.beginPath();
-            ctx.arc(center, center, radius - 0, 0, 0 * Math.PI); // Inset slightly
-            ctx.fillStyle = 'rgba(0, 0, 0, 0)'; // slate-900 with transparency
-            ctx.fill();
-            
-            // Define the clipping path that REVEALS the image based on the seconds
-            ctx.beginPath();
-            ctx.moveTo(center, center);
-            const startAngle = (seconds * (Math.PI / 30)) - (Math.PI / 2);
-            const endAngle = (2 * Math.PI) - (Math.PI / 2); // End of the circle
-            ctx.arc(center, center, radius - 2, startAngle, endAngle);
-            ctx.closePath();
-            ctx.clip(); 
-            
-            // Draw the background image ONLY within the clipped area
-            if (bgImage.complete && bgImage.naturalHeight !== 0) {
-                ctx.globalAlpha = 0.8; // Make the revealed image slightly muted
-                ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-                ctx.globalAlpha = 1.0;
-            }
-            
-            ctx.restore(); // Restore context, removing the clipping path
+    function drawClock() {
+      const now = new Date();
+      const seconds = now.getSeconds();
+      const minutes = now.getMinutes();
+      const hours = now.getHours();
 
-            // --- 3. Draw Markers ---
-            for (let i = 1; i <= 12; i++) {
-                const angle = i * Math.PI / 6;
-                const isProminent = i % 3 === 0;
-                
-                ctx.beginPath();
-                ctx.lineWidth = isProminent ? 4 : 2;
-                ctx.strokeStyle = '#000000'; // slate-500
-                ctx.lineCap = 'round';
-                
-                const x1 = center + (radius - (isProminent ? 20 : 15)) * Math.sin(angle);
-                const y1 = center - (radius - (isProminent ? 20 : 15)) * Math.cos(angle);
-                const x2 = center + (radius - 8) * Math.sin(angle);
-                const y2 = center - (radius - 8) * Math.cos(angle);
-                
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.stroke();
-            }
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // --- 4. Draw Hands with Glow Effect ---
-            ctx.shadowColor = 'rgba(0, 0, 0, 0)'; // cyan-400 glow
-            ctx.shadowBlur = 15;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(center, center, radius, 0, 0);
+      ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+      ctx.fill();
 
-            let hourAngle = (hours % 12 + minutes / 60) * Math.PI / 6 - Math.PI / 2;
-            drawHand(hourAngle, radius * 0.5, 8, '#000000'); // slate-200
+      ctx.beginPath();
+      ctx.moveTo(center, center);
+      const startAngle = (seconds * (Math.PI / 30)) - (Math.PI / 2);
+      const endAngle = (2 * Math.PI) - (Math.PI / 2);
+      ctx.arc(center, center, radius - 2, startAngle, endAngle);
+      ctx.closePath();
+      ctx.clip();
 
-            let minuteAngle = (minutes + seconds / 60) * Math.PI / 30 - Math.PI / 2;
-            drawHand(minuteAngle, radius * 0.75, 6, '#000000'); // slate-200
+      if (bgImage.complete && bgImage.naturalHeight !== 0) {
+        ctx.globalAlpha = 0.8;
+        ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = 1.0;
+      }
 
-            let secondAngle = (seconds * Math.PI / 30) - Math.PI / 2;
-            drawHand(secondAngle, radius * 0.9, 3, '#000000'); // cyan-400 for accent
+      ctx.restore();
 
-            // Clear shadow for subsequent drawings
-            ctx.shadowColor = 'transparent';
-            ctx.shadowBlur = 2;
-            
-            // --- 5. Draw Center Dot ---
-            ctx.beginPath();
-            ctx.arc(center, center, 8, 0, 2 * Math.PI);
-            ctx.fillStyle = '#000000'; // cyan-400
-            ctx.fill();
-            
-            ctx.beginPath();
-            ctx.arc(center, center, 4, 0, 2 * Math.PI);
-            ctx.fillStyle = '#ffffff'; // slate-900
-            ctx.fill();
-        }
+      for (let i = 1; i <= 12; i++) {
+        const angle = i * Math.PI / 6;
+        const isProminent = i % 3 === 0;
 
-        /**
-         * Helper function to draw a single clock hand.
-         */
-        function drawHand(angle, length, width, color) {
-            ctx.beginPath();
-            ctx.lineWidth = width;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = color;
-            ctx.moveTo(center, center);
-            ctx.lineTo(center + length * Math.cos(angle), center + length * Math.sin(angle));
-            ctx.stroke();
-        }
-        
-        /**
-         * Main animation loop.
-         */
-        function animate() {
-            drawClock();
-            animationFrameId = requestAnimationFrame(animate);
-        }
+        ctx.beginPath();
+        ctx.lineWidth = isProminent ? 4 : 2;
+        ctx.strokeStyle = '#000000';
+        ctx.lineCap = 'round';
 
-        // --- Initial Load ---
-        // Load a default image from a reliable source (picsum.photos) that provides correct CORS headers.
-        loadImage('https://i.postimg.cc/ZRdKmz7T/Alish.jpg');
-    </script>
+        const x1 = center + (radius - (isProminent ? 20 : 15)) * Math.sin(angle);
+        const y1 = center - (radius - (isProminent ? 20 : 15)) * Math.cos(angle);
+        const x2 = center + (radius - 8) * Math.sin(angle);
+        const y2 = center - (radius - 8) * Math.cos(angle);
+
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      ctx.shadowColor = 'rgba(0, 0, 0, 0)';
+      ctx.shadowBlur = 15;
+
+      let hourAngle = (hours % 12 + minutes / 60) * Math.PI / 6 - Math.PI / 2;
+      drawHand(hourAngle, radius * 0.5, 8, '#000000');
+
+      let minuteAngle = (minutes + seconds / 60) * Math.PI / 30 - Math.PI / 2;
+      drawHand(minuteAngle, radius * 0.75, 6, '#000000');
+
+      let secondAngle = (seconds * Math.PI / 30) - Math.PI / 2;
+      drawHand(secondAngle, radius * 0.9, 3, '#000000');
+
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 2;
+
+      ctx.beginPath();
+      ctx.arc(center, center, 8, 0, 2 * Math.PI);
+      ctx.fillStyle = '#000000';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(center, center, 4, 0, 2 * Math.PI);
+      ctx.fillStyle = '#ffffff';
+      ctx.fill();
+    }
+
+    function drawHand(angle, length, width, color) {
+      ctx.beginPath();
+      ctx.lineWidth = width;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = color;
+      ctx.moveTo(center, center);
+      ctx.lineTo(center + length * Math.cos(angle), center + length * Math.sin(angle));
+      ctx.stroke();
+    }
+
+    function animate() {
+      drawClock();
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    // Initial image load
+    loadImage("https://i.postimg.cc/ZRdKmz7T/Alish.jpg");
+  </script>
 </body>
 </html>
