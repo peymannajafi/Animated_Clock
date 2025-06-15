@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Second-Synced Animated Clock</title>
+    <title>Customizable Animated Clock</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -29,11 +29,49 @@
             /* The shadow now applies to the drawing, giving a floating effect */
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            width: 300px;
+        }
+        #imageUrlInput {
+            flex-grow: 1;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+        #updateImageBtn {
+            padding: 0.5rem 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        #updateImageBtn:hover {
+            background-color: #2563eb;
+        }
+        #errorMessage {
+            color: #ef4444; /* red-500 */
+            background-color: white;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            text-align: center;
+            width: 300px;
+        }
     </style>
 </head>
 <body>
     <div class="clock-container">
         <canvas id="clockCanvas" width="300" height="300"></canvas>
+        <div class="input-group">
+            <input type="text" id="imageUrlInput" placeholder="Paste image URL here...">
+            <button id="updateImageBtn">Update</button>
+        </div>
+        <div id="errorMessage" style="display: none;"></div>
     </div>
 
     <script>
@@ -43,22 +81,55 @@
         const radius = canvas.height / 2;
         const center = radius;
 
+        // --- DOM Elements for Custom Image ---
+        const imageUrlInput = document.getElementById('imageUrlInput');
+        const updateImageBtn = document.getElementById('updateImageBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        
         // --- Image Loading ---
         const bgImage = new Image();
-        // The crossOrigin attribute must be set before the src attribute for security.
-        bgImage.crossOrigin = "Anonymous";
-        // Using a reliable, CORS-friendly image source to prevent loading errors.
-        bgImage.src = 'https://picsum.photos/300/300'; 
+        let animationFrameId; // To control the animation loop
+
+        /**
+         * Loads an image from a URL and starts the clock animation.
+         * @param {string} url - The URL of the image to load.
+         */
+        function loadImage(url) {
+            // Hide any previous error messages
+            errorMessage.style.display = 'none';
+
+            // Stop any existing animation loop
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            // The crossOrigin attribute must be set before the src attribute for security.
+            bgImage.crossOrigin = "Anonymous";
+            bgImage.src = url;
+        }
         
         bgImage.onerror = () => {
-            console.error("Failed to load image. Falling back to a placeholder.");
-            // Fallback to a plain placeholder if the primary image fails
-            const fallbackImage = new Image();
-            fallbackImage.src = "https://placehold.co/300x300/e0e0e0/666666?text=Image+Error";
-            fallbackImage.onload = () => {
-                 ctx.drawImage(fallbackImage, 0, 0, canvas.width, canvas.height);
-            }
+            console.error("Failed to load image. It may be due to a bad URL or browser security (CORS) restrictions. Falling back to a placeholder.");
+            // Show user-friendly error message
+            errorMessage.textContent = 'Image failed to load. Please try another URL.';
+            errorMessage.style.display = 'block';
+
+            // Fallback to a plain placeholder if the primary image fails.
+            // Setting src directly here is safer than calling loadImage to avoid potential error loops.
+            bgImage.src = "https://placehold.co/300x300/e0e0e0/666666?text=Image+Error";
         };
+
+        // Start the animation once the image has loaded successfully
+        bgImage.onload = () => {
+            animate();
+        };
+
+        // Event listener for the update button
+        updateImageBtn.addEventListener('click', () => {
+            const newUrl = imageUrlInput.value.trim();
+            if (newUrl) {
+                loadImage(newUrl);
+            }
+        });
 
         /**
          * Draws the entire clock face, including background, markers, and hands.
@@ -69,33 +140,25 @@
             const seconds = now.getSeconds();
 
             // --- 1. Clear and Prepare Canvas ---
-            // This now clears to transparent instead of white.
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // The static white background circle has been removed.
 
             // --- 2. Draw Clipped Background Image ---
             ctx.save(); // Save the current state
-            
-            // Create a clipping path. The amount of image shown depends on the current second.
             ctx.beginPath();
             ctx.moveTo(center, center);
             
-            // Each second, the starting angle of the visible part of the image increases.
-            // This effectively "removes" a slice from the beginning each second.
             const startAngle = (seconds * (Math.PI * 2 / 60)) - (Math.PI / 2);
             const endAngle = (2 * Math.PI) - (Math.PI / 2); // The end of the circle
             
             ctx.arc(center, center, radius, startAngle, endAngle);
             ctx.closePath();
-            ctx.clip(); // Apply the clipping path
+            ctx.clip(); 
             
-            // Draw the image - it will only appear within the clipped area
-            if (bgImage.complete && bgImage.naturalHeight !== 0) { // Check if the image is actually loaded
+            if (bgImage.complete && bgImage.naturalHeight !== 0) {
                 ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
             }
             
-            ctx.restore(); // Restore the state, removing the clip
+            ctx.restore(); 
 
             // --- 3. Draw Markers ---
             for (let i = 1; i <= 12; i++) {
@@ -104,7 +167,7 @@
                 
                 ctx.beginPath();
                 ctx.lineWidth = isProminent ? 3 : 2;
-                ctx.strokeStyle = isProminent ? '#93c5fd' : '#dbeafe'; // blue-300 : blue-100
+                ctx.strokeStyle = isProminent ? '#93c5fd' : '#dbeafe'; 
                 
                 const x1 = center + (radius - (isProminent ? 15 : 10)) * Math.sin(angle);
                 const y1 = center - (radius - (isProminent ? 15 : 10)) * Math.cos(angle);
@@ -120,22 +183,20 @@
             const minutes = now.getMinutes();
             const hours = now.getHours();
 
-            // Hour Hand
+            // Restored multi-shade blue color scheme
             let hourAngle = (hours % 12 + minutes / 60) * Math.PI / 6 - Math.PI / 2;
-            drawHand(hourAngle, radius * 0.5, 8, '#1e3a8a'); // blue-900
+            drawHand(hourAngle, radius * 0.5, 8, '#1e3a8a'); // Darkest blue
 
-            // Minute Hand
             let minuteAngle = (minutes + seconds / 60) * Math.PI / 30 - Math.PI / 2;
-            drawHand(minuteAngle, radius * 0.75, 6, '#2563eb'); // blue-600
+            drawHand(minuteAngle, radius * 0.75, 6, '#2563eb'); // Mid-tone blue
 
-            // Second Hand
             let secondAngle = (seconds) * Math.PI / 30 - Math.PI / 2;
-            drawHand(secondAngle, radius * 0.9, 2, '#60a5fa'); // blue-400
+            drawHand(secondAngle, radius * 0.9, 2, '#60a5fa'); // Lightest blue
             
             // --- 5. Draw Center Dot ---
             ctx.beginPath();
             ctx.arc(center, center, 6, 0, 2 * Math.PI);
-            ctx.fillStyle = '#1e3a8a'; // blue-900
+            ctx.fillStyle = '#1e3a8a';
             ctx.fill();
         }
 
@@ -157,14 +218,12 @@
          */
         function animate() {
             drawClock();
-            requestAnimationFrame(animate);
+            animationFrameId = requestAnimationFrame(animate);
         }
 
-        // Start the animation once the image has loaded
-        bgImage.onload = () => {
-            // Start the main clock animation loop.
-            animate();
-        };
+        // --- Initial Load ---
+        // Load a default image from a reliable source (picsum.photos) to prevent initial errors.
+        loadImage('https://picsum.photos/300/300');
     </script>
 </body>
 </html>
