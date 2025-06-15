@@ -37,13 +37,13 @@
         #imageUrlInput {
             flex-grow: 1;
             border-radius: 0.375rem;
-            border: 1px solid #d1d5db;
+            border: 1px solid #0000ff;
             padding: 0.5rem 0.75rem;
             font-size: 0.875rem;
         }
         #updateImageBtn {
             padding: 0.5rem 1rem;
-            background-color: #1e3a8a;
+            background-color: #0000ff;
             color: white;
             border-radius: 0.375rem;
             border: none;
@@ -51,10 +51,10 @@
             font-weight: 500;
         }
         #updateImageBtn:hover {
-            background-color: #1e3a8a;
+            background-color: #0000ff;
         }
         #errorMessage {
-            color: #ef4444; /* red-500 */
+            color: #0000ff; /* red-500 */
             background-color: white;
             padding: 0.5rem;
             border-radius: 0.375rem;
@@ -166,8 +166,8 @@
                 const isProminent = i % 3 === 0;
                 
                 ctx.beginPath();
-                ctx.lineWidth = isProminent ? 3 : 2;
-                ctx.strokeStyle = isProminent ? '#1e3a8a' : '#1e3a8a'; 
+                ctx.lineWidth = isProminent ? 3 : 3;
+                ctx.strokeStyle = isProminent ? '#0000ff' : '#0000ff'; 
                 
                 const x1 = center + (radius - (isProminent ? 15 : 10)) * Math.sin(angle);
                 const y1 = center - (radius - (isProminent ? 15 : 10)) * Math.cos(angle);
@@ -185,18 +185,18 @@
 
             // Restored multi-shade blue color scheme
             let hourAngle = (hours % 12 + minutes / 60) * Math.PI / 6 - Math.PI / 2;
-            drawHand(hourAngle, radius * 0.5, 8, '#1e3a8a'); // Darkest blue
+            drawHand(hourAngle, radius * 0.5, 8, '#0000ff'); // Darkest blue
 
             let minuteAngle = (minutes + seconds / 60) * Math.PI / 30 - Math.PI / 2;
-            drawHand(minuteAngle, radius * 0.75, 6, '#1e3a8a'); // Mid-tone blue
+            drawHand(minuteAngle, radius * 0.75, 6, '#0000ff'); // Mid-tone blue
 
             let secondAngle = (seconds) * Math.PI / 30 - Math.PI / 2;
-            drawHand(secondAngle, radius * 0.9, 2, '#1e3a8a'); // Lightest blue
+            drawHand(secondAngle, radius * 0.9, 2, '#0000ff'); // Lightest blue
             
             // --- 5. Draw Center Dot ---
             ctx.beginPath();
             ctx.arc(center, center, 6, 0, 2 * Math.PI);
-            ctx.fillStyle = '#1e3a8a';
+            ctx.fillStyle = '#0000ff';
             ctx.fill();
         }
 
