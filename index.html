@@ -14,8 +14,8 @@
             justify-content: center;
             min-height: 100vh;
             /* Changed to a gradient to demonstrate transparency */
-            background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
-            color: #374151;
+            background-image: linear-gradient(to top, #FFFFFF 70%);
+            color: #000000;
         }
         .clock-container {
             display: flex;
@@ -43,7 +43,7 @@
         }
         #updateImageBtn {
             padding: 0.5rem 1rem;
-            background-color: #3b82f6;
+            background-color: #1e3a8a;
             color: white;
             border-radius: 0.375rem;
             border: none;
@@ -51,7 +51,7 @@
             font-weight: 500;
         }
         #updateImageBtn:hover {
-            background-color: #2563eb;
+            background-color: #1e3a8a;
         }
         #errorMessage {
             color: #ef4444; /* red-500 */
@@ -167,7 +167,7 @@
                 
                 ctx.beginPath();
                 ctx.lineWidth = isProminent ? 3 : 2;
-                ctx.strokeStyle = isProminent ? '#93c5fd' : '#dbeafe'; 
+                ctx.strokeStyle = isProminent ? '#1e3a8a' : '#1e3a8a'; 
                 
                 const x1 = center + (radius - (isProminent ? 15 : 10)) * Math.sin(angle);
                 const y1 = center - (radius - (isProminent ? 15 : 10)) * Math.cos(angle);
@@ -188,10 +188,10 @@
             drawHand(hourAngle, radius * 0.5, 8, '#1e3a8a'); // Darkest blue
 
             let minuteAngle = (minutes + seconds / 60) * Math.PI / 30 - Math.PI / 2;
-            drawHand(minuteAngle, radius * 0.75, 6, '#2563eb'); // Mid-tone blue
+            drawHand(minuteAngle, radius * 0.75, 6, '#1e3a8a'); // Mid-tone blue
 
             let secondAngle = (seconds) * Math.PI / 30 - Math.PI / 2;
-            drawHand(secondAngle, radius * 0.9, 2, '#60a5fa'); // Lightest blue
+            drawHand(secondAngle, radius * 0.9, 2, '#1e3a8a'); // Lightest blue
             
             // --- 5. Draw Center Dot ---
             ctx.beginPath();
